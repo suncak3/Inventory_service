@@ -18,7 +18,14 @@ func (r *Repository) GetAllProducts() ([]domain.Product, error) {
 
 	var products []domain.Product
 
-	query := `select p.name, c.name AS 'category_name' from products p JOIN categories c on c.id = p.category_id`
+	query := `
+		SELECT 
+			p.id, p.name, p.description, p.price, p.stock_level, p.category_id,
+			c.id AS "category.id",
+			c.name AS "category.name"
+		FROM products p
+		JOIN categories c ON c.id = p.category_id
+`
 
 	err := r.db.Select(&products, query)
 
@@ -29,7 +36,13 @@ func (r *Repository) GetAllProducts() ([]domain.Product, error) {
 }
 
 func (r *Repository) GetProductByID(id uint) (*domain.Product, error) {
-	query := `select * from products p JOIN categories c on c.id = p.category_id where p.id = $1`
+	query := `SELECT 
+		p.id, p.name, p.description, p.price, p.stock_level, p.category_id,
+		c.id AS "category.id",
+		c.name AS "category.name"
+	FROM products p
+	JOIN categories c ON c.id = p.category_id
+	WHERE p.id = $1`
 
 	var product domain.Product
 
